@@ -64,7 +64,7 @@ function playNext() {
     const songName = path.basename(nextSongPath);
 
     if (currentTextChannel) {
-        currentTextChannel.send('Now playing: **${songName}**`');
+        currentTextChannel.send(`Now playing: **${songName}**`);
     }
 
     // Inline vol enable
