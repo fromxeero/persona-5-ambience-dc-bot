@@ -28,18 +28,19 @@ let player = null;
 let connection = null;
 let currentTextChannel = null;
 
-// Ensure music directory exists
+// Make sure the music is actually there
+
 if (!fs.existsSync(MUSIC_DIR)) {
     fs.mkdirSync(MUSIC_DIR);
 }
 
-// Helper: Read directory and shuffle files
+// Read dir and shuff-le files
 function loadShuffledPlaylist() {
     const files = fs.readdirSync(MUSIC_DIR)
         .filter(file => file.endsWith('.mp3'))
         .map(file => path.join(MUSIC_DIR, file));
 
-    // Fisher-Yates Shuffle algorithm
+    // Shuffle Algo (Fischer-Yates)
     for (let i = files.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [files[i], files[j]] = [files[j], files[i]];
@@ -47,7 +48,7 @@ function loadShuffledPlaylist() {
     return files;
 }
 
-// Function to stream the next audio resource
+// Play next song, if no more then message that out of songs
 function playNext() {
     if (playlist.length === 0) {
         if (currentTextChannel) currentTextChannel.send("🛑 Reached the end of the shuffled playlist!");
@@ -61,7 +62,7 @@ function playNext() {
         currentTextChannel.send(`🎶 Now playing: **${songName}**`);
     }
 
-    // Create audio stream from local file
+    // Play the audio
     const resource = createAudioResource(nextSongPath);
     player.play(resource);
 }
@@ -71,7 +72,7 @@ client.once('ready', () => {
 });
 
 client.on('messageCreate', async (message) => {
-    // Ignore bot messages or messages without prefix
+    // Ignore all non prefixed messages
     if (message.author.bot || !message.content.startsWith(PREFIX)) return;
 
     const args = message.content.slice(PREFIX.length).trim().split(/+/);
